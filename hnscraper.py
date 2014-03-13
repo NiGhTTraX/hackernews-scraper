@@ -20,8 +20,11 @@ class Scraper(object):
 
   FETCH_LIMIT = 50 * 20
 
-  def __init__(self):
-    self.endpoint = AlgoliaEndpoint()
+  def __init__(self, endpoint=None):
+    if endpoint is None:
+      endpoint = AlgoliaEndpoint()
+
+    self.endpoint = endpoint
 
   def __translate_fields(self, response, fields=None):
     """Translate fields of returned objects.

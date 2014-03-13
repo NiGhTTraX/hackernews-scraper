@@ -3,7 +3,7 @@ import urllib
 
 
 class AlgoliaEndpoint(object):
-  """Base class for defining an API endpoint."""
+  """Class used to call the Algolia API and parse the response."""
 
   URL = "http://hn.algolia.com/api/v1/search_by_date"
 
