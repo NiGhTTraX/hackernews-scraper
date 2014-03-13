@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 hacker-news story and comment scraper.
 """

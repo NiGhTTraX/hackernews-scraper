@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-"""
-hacker-news endpoints
-"""
-
 from requests import Request, Session
 import urllib
 
