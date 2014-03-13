@@ -2,7 +2,7 @@
 hacker-news story and comment scraper.
 """
 
-from endpoints import JSONEndpoint
+from endpoints import AlgoliaEndpoint
 
 
 class TooManyItemsException(Exception):
@@ -18,8 +18,10 @@ class TooManyItemsException(Exception):
 class Scraper(object):
   """Generic hacker news scraper."""
 
-  URL = "http://hn.algolia.com/api/v1/search_by_date"
   FETCH_LIMIT = 50 * 20
+
+  def __init__(self):
+    self.endpoint = AlgoliaEndpoint()
 
   def __translate_fields(self, response, fields=None):
     """Translate fields of returned objects.
@@ -46,30 +48,28 @@ class Scraper(object):
 
     return hits
 
-  def scrape(self, params, fields=None, endpoint=None):
+  def scrape(self, tag, since, until=None, fields=None):
     """Call the endpoint and get the results.
 
     Params:
-      params: Parameters to send to the endpoint.
+      tag: Can be "story" or "comment".
+      since: timestamp representing how old the items should be.
 
     Optional params:
+      until: timestamp representing how new the items should be.
       fields: Field translations.
-      endpoint: Endpoint to use. Defaults to JSONEndpoint.
 
     Yields:
-      One page of results. This is a list of dicts.
+      One item. This is a dict.
 
     Raises:
-      TooManyItemsException if there's more than FETCH_LIMIT stories.
+      TooManyItemsException if there's more than FETCH_LIMIT items.
     """
 
-    if endpoint is None:
-      endpoint = JSONEndpoint(Scraper.URL)
-
-    params["page"] = 0
-
-    r = endpoint.get(params)
-    yield self.__translate_fields(r, fields)
+    r = self.endpoint.get(tag, since, until)
+    hits = self.__translate_fields(r, fields)
+    for hit in hits:
+      yield hit
 
     # Let's see if there are any more pages.
     try:
@@ -77,12 +77,14 @@ class Scraper(object):
     except ValueError:
       pages = 0
 
-    params["page"] += 1
-    while params["page"] < pages:
-      r = endpoint.get(params)
-      yield self.__translate_fields(r, fields)
+    page = 1
+    while page < pages:
+      r = self.endpoint.get(tag, since, until, page)
+      hits = self.__translate_fields(r, fields)
+      for hit in hits:
+        yield hit
 
-      params["page"] += 1
+      page += 1
 
     # Check to see if there are more stories that we can fetch.
     if r["nbHits"] > self.FETCH_LIMIT:
@@ -93,31 +95,21 @@ class StoryScraper(object):
   """hacker news story scraper."""
 
   @staticmethod
-  def getStories(since, until=None, endpoint = None):
-    """Scrape stories. The stories are sorted descending by created date.
+  def getStories(since, until=None):
+    """Scrape stories between 2 timestamps.
 
     Params:
       since: timestamp representing how old the news should be.
 
     Optional params:
       until: timestamp representing how new the news should be.
-      endpoint: endpoint to use. Defaults to JSONEndpoint.
 
     Yields:
-      One page of stories. This is a list of dicts.
+      One story. This is a dict.
 
     Excepts:
       TooManyItemsException.
     """
-
-    numericFilters = ["created_at_i<%d" % since]
-    if until is not None:
-      numericFilters += ["created_at_i>%d" % until]
-
-    params = {
-        "numericFilters": ",".join(numericFilters),
-        "tags": "story"
-    }
 
     fields = {
         "created_at": "created_at",
@@ -130,6 +122,5 @@ class StoryScraper(object):
         "story_id": "objectID"
     }
 
-    s = Scraper()
-    return s.scrape(params=params, fields=fields, endpoint=endpoint)
+    return Scraper().scrape("story", since, until, fields)
 
