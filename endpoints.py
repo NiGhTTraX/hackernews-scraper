@@ -6,7 +6,8 @@ class AlgoliaEndpoint(object):
 
   URL = "http://hn.algolia.com/api/v1/search_by_date"
 
-  def get(self, tag, since, until=None, page=0):
+  @staticmethod
+  def get(tag, since, until=None, page=0):
     """Send a GET request to the endpoint.
 
     Since Algolia only returns JSON, parse it into a dict.
