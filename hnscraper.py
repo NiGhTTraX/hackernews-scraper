@@ -7,12 +7,7 @@ from endpoints import AlgoliaEndpoint
 
 class TooManyItemsException(Exception):
   """Exception for when we reach the story fetch limit."""
-
-  def __init__(self, value):
-    self.value = value
-
-  def __str__(self):
-    return repr(self.value)
+  pass
 
 
 class Scraper(object):
