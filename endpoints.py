@@ -40,9 +40,5 @@ class AlgoliaEndpoint(object):
     url += "?" + "&".join(["%s=%s" for k,v in params.items()])
     response = requests.get(url)
 
-
-    try:
-      return response.json()
-    except ValueError:
-      return None
+    return response.json()
 
