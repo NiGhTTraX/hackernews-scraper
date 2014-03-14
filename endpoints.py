@@ -1,5 +1,4 @@
-from requests import Request, Session
-import urllib
+import requests
 
 
 class AlgoliaEndpoint(object):
@@ -37,16 +36,10 @@ class AlgoliaEndpoint(object):
         "page": page
     }
 
-    request = Request("GET", self.URL)
-    prepared = request.prepare()
+    url = AlgoliaEndpoint.URL
+    url += "?" + "&".join(["%s=%s" for k,v in params.items()])
+    response = requests.get(url)
 
-    # Manually prepare the params so we can work around escaping.
-    p = urllib.urlencode(params)
-    p = p.replace("%3C", "<")
-    prepared.url += "?" + p
-
-    session = Session()
-    response = session.send(prepared)
 
     try:
       return response.json()
