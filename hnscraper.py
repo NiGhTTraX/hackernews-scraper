@@ -9,15 +9,70 @@ class TooManyItemsException(Exception):
 class Scraper(object):
   """Generic hacker news scraper."""
 
-  FETCH_LIMIT = 50 * 20
+  @staticmethod
+  def scrape(tag, since, until=None, fields=None):
+    """Call the Algolia endpoint and get the results.
 
-  def __init__(self, endpoint=None):
-    if endpoint is None:
-      endpoint = AlgoliaEndpoint()
+    Example:
+      Scraper.scrape("story", 1394901958) will return all story items since
+      15 Mar 2014 16:45:58 GMT.
 
-    self.endpoint = endpoint
+    Params:
+      tag: Can be "story" or "comment".
+      since: timestamp representing how old the items should be.
 
-  def __translate_fields(self, response, fields=None):
+    Optional params:
+      until: timestamp representing how new the items should be.
+      fields: Field translations. This is a dict in the form
+      { translated_field: original_field }. Only the fields specified in this
+      dict will be contained in the response.
+
+    Yields:
+      One item. This is a dict. You can specify which fields will be returned
+      using the optional fields param.
+
+    Raises:
+      TooManyItemsException if there's more items than the endpoint can let us
+      fetch.
+    """
+
+    page = 0
+
+    while True:
+      hits = Scraper._getPage(tag, since, until, page, fields)
+
+      # Was this the last page?
+      if hits is None:
+        break
+
+      for hit in hits:
+        yield hit
+
+      page += 1
+
+  @staticmethod
+  def _getPage(tag, since, until, page, fields):
+    """Fetch a single plage of items and translate the fields.
+
+    Returns:
+      A list of items, each being a dict. If this was the last page, or we've
+      reached the fetch limit, return None.
+    """
+    resp = AlgoliaEndpoint.get(tag, since, until, page)
+    hits = Scraper._translateFields(resp, fields)
+
+    if not hits:
+      # This might be the last page, or there might be more pages than we can
+      # fetch.
+      if resp["nbHits"] > resp["nbPages"] * resp["hitsPerPage"]:
+        raise TooManyItemsException("More than 50 pages of items")
+
+      return None
+
+    return hits
+
+  @staticmethod
+  def _translateFields(response, fields=None):
     """Translate fields of returned objects.
 
     Params:
@@ -26,6 +81,7 @@ class Scraper(object):
       form: translated_field: original_field. If not provided, just returned the
       whole objects.
     """
+
     if fields is None:
       return response["hits"]
 
@@ -41,48 +97,6 @@ class Scraper(object):
       hits.append(r)
 
     return hits
-
-  def scrape(self, tag, since, until=None, fields=None):
-    """Call the endpoint and get the results.
-
-    Params:
-      tag: Can be "story" or "comment".
-      since: timestamp representing how old the items should be.
-
-    Optional params:
-      until: timestamp representing how new the items should be.
-      fields: Field translations.
-
-    Yields:
-      One item. This is a dict.
-
-    Raises:
-      TooManyItemsException if there's more than FETCH_LIMIT items.
-    """
-
-    r = self.endpoint.get(tag, since, until)
-    hits = self.__translate_fields(r, fields)
-    for hit in hits:
-      yield hit
-
-    # Let's see if there are any more pages.
-    try:
-      pages = int(r["nbPages"])
-    except ValueError:
-      pages = 0
-
-    page = 1
-    while page < pages:
-      r = self.endpoint.get(tag, since, until, page)
-      hits = self.__translate_fields(r, fields)
-      for hit in hits:
-        yield hit
-
-      page += 1
-
-    # Check to see if there are more stories that we can fetch.
-    if r["nbHits"] > self.FETCH_LIMIT:
-      raise TooManyItemsException("More than 50 pages of items")
 
 
 class StoryScraper(object):
