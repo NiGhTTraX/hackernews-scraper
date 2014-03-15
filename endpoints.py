@@ -29,9 +29,9 @@ class AlgoliaEndpoint(object):
       requests.exceptions.RequestException.
     """
 
-    numericFilters = ["created_at_i<%d" % since]
+    numericFilters = ["created_at_i>%d" % since]
     if until is not None:
-      numericFilters += ["created_at_i>%d" % until]
+      numericFilters.append("created_at_i<%d" % until)
 
     params = {
         "numericFilters": ",".join(numericFilters),
@@ -40,7 +40,7 @@ class AlgoliaEndpoint(object):
     }
 
     url = AlgoliaEndpoint.URL
-    url += "?" + "&".join(["%s=%s" for k,v in params.items()])
+    url += "?" + "&".join(["%s=%s" % (k,v) for k,v in params.items()])
     response = requests.get(url)
 
     return response.json()
