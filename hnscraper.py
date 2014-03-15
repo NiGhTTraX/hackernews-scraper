@@ -124,6 +124,7 @@ class StoryScraper(object):
       TooManyItemsException.
     """
 
+    # These are the fields that the response will contain.
     fields = {
         "created_at": "created_at",
         "title": "title",
