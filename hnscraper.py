@@ -1,7 +1,3 @@
-"""
-hacker-news story and comment scraper.
-"""
-
 from endpoints import AlgoliaEndpoint
 
 
