@@ -100,7 +100,12 @@ class Scraper(object):
 
 
 class StoryScraper(object):
-  """hacker news story scraper."""
+  """hacker news story scraper.
+
+  Example:
+      Story.Scraper.scrape("story", 1394901958) will return all stories since
+      15 Mar 2014 16:45:58 GMT.
+  """
 
   @staticmethod
   def getStories(since, until=None):
