@@ -79,6 +79,21 @@ class TestScraper(unittest.TestCase):
     self.assertItemsEqual(resp[0].keys(), ["test"])
 
   @httpretty.activate
+  def test_scrape_translate_invalid_field(self):
+    item = ItemFactory()
+
+    httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
+                           responses=self._createPages(hits=[item]),
+                           content_type="application/json")
+
+    fields = {
+        "test": "missing"
+    }
+
+    resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
+    self.assertItemsEqual(resp[0].keys(), [])
+
+  @httpretty.activate
   def test_scrape_multiple_pages(self):
     PAGES = 2
 
