@@ -12,6 +12,8 @@ class AlgoliaEndpoint(object):
 
     Since Algolia only returns JSON, parse it into a dict.
 
+    See http://hn.algolia.com/api for more details.
+
     Params:
       tag: Can be "story" or "comment".
       since: timestamp representing how old the news should be.
