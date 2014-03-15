@@ -142,6 +142,34 @@ class TestScraper(unittest.TestCase):
     resp = list(Scraper().scrape(tag="test", since=42))
     self.assertListEqual(resp, [])
 
+  @httpretty.activate
+  def test_scrape_correct_request(self):
+    item = ItemFactory()
+
+    httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
+                           responses=self._createPages(pages=2, hits=[item]),
+                           content_type="application/json")
+
+    gen = Scraper().scrape(tag="test", since=42, until=43)
+
+    gen.next()
+    self.assertDictEqual(httpretty.last_request().querystring,
+        {
+          "numericFilters": ["created_at_i>42,created_at_i<43"],
+          "tags": ["test"],
+          "page": ["0"]
+        }
+    )
+
+    gen.next()
+    self.assertDictEqual(httpretty.last_request().querystring,
+        {
+          "numericFilters": ["created_at_i>42,created_at_i<43"],
+          "tags": ["test"],
+          "page": ["1"]
+        }
+    )
+
   def _createPages(self, pages=1, hits=None):
     resp = [
         httpretty.Response(body=json.dumps(
