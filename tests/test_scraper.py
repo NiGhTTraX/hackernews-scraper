@@ -1,7 +1,7 @@
-import unittest
-import httpretty
 import factory
+import httpretty
 import json
+import unittest
 
 from endpoints import AlgoliaEndpoint
 from hnscraper import Scraper, TooManyItemsException
