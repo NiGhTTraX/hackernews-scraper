@@ -52,12 +52,13 @@ class Scraper(object):
 
   @staticmethod
   def _getPage(tag, since, until, page, fields):
-    """Fetch a single plage of items and translate the fields.
+    """Fetch a single page of items and translate the fields.
 
     Returns:
       A list of items, each being a dict. If this was the last page, or we've
       reached the fetch limit, return None.
     """
+
     resp = AlgoliaEndpoint.get(tag, since, until, page)
     hits = Scraper._translateFields(resp, fields)
 
@@ -77,6 +78,8 @@ class Scraper(object):
 
     Params:
       response: Dict containing all the hits.
+
+    Optional params:
       fields: A dictionary representing the field translations. Should be in the
       form: translated_field: original_field. If not provided, just returned the
       whole objects.
@@ -87,14 +90,14 @@ class Scraper(object):
 
     hits = []
     for hit in response["hits"]:
-      r = {}
+      item = {}
       for translated_field, original_field in fields.iteritems():
         try:
-          r[translated_field] = hit[original_field]
+          item[translated_field] = hit[original_field]
         except KeyError:
           pass
 
-      hits.append(r)
+      hits.append(item)
 
     return hits
 

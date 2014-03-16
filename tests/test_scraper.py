@@ -109,7 +109,7 @@ class TestScraper(unittest.TestCase):
   @httpretty.activate
   def test_scrape_page_limit(self):
     hits = [ItemFactory(), ItemFactory()]
-    pages= [httpretty.Response(body=json.dumps(
+    pages = [httpretty.Response(body=json.dumps(
             ResponseFactory(hits=hits)
         ))
     ]
@@ -127,7 +127,7 @@ class TestScraper(unittest.TestCase):
                            content_type="application/json")
 
     with self.assertRaises(TooManyItemsException):
-      resp = list(Scraper().scrape(tag="test", since=42))
+      list(Scraper().scrape(tag="test", since=42))
 
   @httpretty.activate
   def test_scrape_no_items(self):
