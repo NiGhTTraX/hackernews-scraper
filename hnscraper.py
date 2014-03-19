@@ -106,8 +106,8 @@ class StoryScraper(object):
   """hacker news story scraper.
 
   Example:
-      Story.Scraper.scrape("story", 1394901958) will return all stories since
-      15 Mar 2014 16:45:58 GMT.
+      StoryScraper.getStories("story", 1394901958) will return all
+      stories since 15 Mar 2014 16:45:58 GMT.
   """
 
   @staticmethod
@@ -140,4 +140,48 @@ class StoryScraper(object):
     }
 
     return Scraper().scrape("story", since, until, fields)
+
+
+class CommentScraper(object):
+  """hacker news comment scraper.
+
+  Example:
+      CommentScraper.getComments("comment", 1394901958) will return all
+      comments since 15 Mar 2014 16:45:58 GMT.
+  """
+
+  @staticmethod
+  def getComments(since, until=None):
+    """Scrape comments between 2 timestamps.
+
+    Params:
+      since: timestamp representing how old the comments should be.
+
+    Optional params:
+      until: timestamp representing how new the coments should be.
+
+    Yields:
+      One comment. This is a dict.
+
+    Excepts:
+      TooManyItemsException.
+    """
+
+    # These are the fields that the response will contain.
+    fields = {
+        "created_at": "created_at",
+        "title": "title",
+        "url": "url",
+        "comment_text": "comment_text",
+        "story_id": "story_id",
+        "story_title": "story_title",
+        "story_url": "story_url",
+        "author": "author",
+        "points": "points",
+        "timestamp": "created_at_i",
+        "comment_id": "objectID",
+        "parent_id": "parent_id",
+    }
+
+    return Scraper().scrape("comment", since, until, fields)
 
