@@ -3,8 +3,8 @@ import httpretty
 import json
 import unittest
 
-from endpoints import AlgoliaEndpoint
-from hnscraper import Scraper, TooManyItemsException
+from hackernews_scraper.endpoints import AlgoliaEndpoint
+from hackernews_scraper.hnscraper import Scraper, TooManyItemsException
 
 
 class ItemFactory(factory.Factory):
