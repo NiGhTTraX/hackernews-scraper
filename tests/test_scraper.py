@@ -48,10 +48,11 @@ class TestScraper(unittest.TestCase):
                                responses=self._createPages(hits=[]),
                                content_type="application/json")
             timeout = 10
-            AlgoliaEndpoint.get('comments', 0, 1, timeout=timeout)
+            # Force results retrieval (method is a generator)
+            list(Scraper.scrape("comments", 0, 1, 0, timeout))
 
             self.assertEquals(set_timeout_mock.call_args[0][0], timeout,
-                               'Timeout has not been set')
+                              "Timeout has not been set")
 
     @httpretty.activate
     def test_scrape_generator(self):
