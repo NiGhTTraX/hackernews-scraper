@@ -19,7 +19,7 @@ class AlgoliaEndpoint(object):
           tag: Can be "story" or "comment".
           since: timestamp representing how old the news should be.
           until: timestamp representing how new the news should be.
-          page: The page number to be fetched.
+          page: The number of the page to be fetched.
           timeout: socket timeout needed to prevent socket operations
                    from hanging; None switches to a default timeout
 
