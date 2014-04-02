@@ -1,14 +1,14 @@
 import requests
 
-DEFAULT_TIMEOUT = 30
 
 class AlgoliaEndpoint(object):
     """Class used to call the Algolia API and parse the response."""
 
+    DEFAULT_TIMEOUT = 30
     URL = "http://hn.algolia.com/api/v1/search_by_date"
 
     @staticmethod
-    def get(tag, since, until=None, page=0, timeout=DEFAULT_TIMEOUT):
+    def get(tag, since, until, page, timeout):
         """Send a GET request to the endpoint.
 
         Since Algolia only returns JSON, parse it into a dict.
@@ -18,12 +18,10 @@ class AlgoliaEndpoint(object):
         Params:
           tag: Can be "story" or "comment".
           since: timestamp representing how old the news should be.
-
-        Optional params:
           until: timestamp representing how new the news should be.
-          page: The number of the page to get.
+          page: The page number to be fetched.
           timeout: socket timeout needed to prevent socket operations
-                   from hanging
+                   from hanging; None switches to a default timeout
 
         Returns:
           A python dict representing the response.
@@ -31,6 +29,8 @@ class AlgoliaEndpoint(object):
         Raises:
           requests.exceptions.RequestException.
         """
+        if timeout is None:
+            timeout = AlgoliaEndpoint.DEFAULT_TIMEOUT
 
         numericFilters = ["created_at_i>%d" % since]
         if until is not None:
