@@ -10,7 +10,7 @@ class Scraper(object):
     """Generic hacker news scraper."""
 
     @staticmethod
-    def scrape(tag, since, until=None, fields=None):
+    def scrape(tag, since, until=None, fields=None, timeout=None):
         """Call the Algolia endpoint and get the results.
 
         Example:
@@ -25,7 +25,9 @@ class Scraper(object):
           until: timestamp representing how new the items should be.
           fields: Field translations. This is a dict in the form
           { translated_field: original_field }. Only the fields specified in this
-          dict will be contained in the response.
+          dict will be contained in the response. If this is None, the exact
+          API response will be returned.
+          timeout: socket timeout
 
         Yields:
           One item. This is a dict. You can specify which fields will be returned
@@ -39,7 +41,7 @@ class Scraper(object):
         page = 0
 
         while True:
-            hits = Scraper._getPage(tag, since, until, page, fields)
+            hits = Scraper._getPage(tag, since, until, page, fields, timeout)
 
             # Was this the last page?
             if hits is None:
@@ -51,7 +53,7 @@ class Scraper(object):
             page += 1
 
     @staticmethod
-    def _getPage(tag, since, until, page, fields):
+    def _getPage(tag, since, until, page, fields, timeout):
         """Fetch a single page of items and translate the fields.
 
         Returns:
@@ -59,7 +61,7 @@ class Scraper(object):
           reached the fetch limit, return None.
         """
 
-        resp = AlgoliaEndpoint.get(tag, since, until, page)
+        resp = AlgoliaEndpoint.get(tag, since, until, page, timeout)
         hits = Scraper._translateFields(resp, fields)
 
         if not hits:
@@ -111,7 +113,7 @@ class StoryScraper(object):
     """
 
     @staticmethod
-    def getStories(since, until=None):
+    def getStories(since, until=None, timeout=None):
         """Scrape stories between 2 timestamps.
 
         Params:
@@ -119,6 +121,7 @@ class StoryScraper(object):
 
         Optional params:
           until: timestamp representing how new the news should be.
+          timeout: socket timeout; None switches to a default value
 
         Yields:
           One story. This is a dict.
@@ -139,7 +142,8 @@ class StoryScraper(object):
             "story_id": "objectID"
         }
 
-        return Scraper().scrape("story", since, until, fields)
+        return Scraper().scrape("story", since, until=until,
+                                fields=fields, timeout=timeout)
 
 
 class CommentScraper(object):
@@ -151,7 +155,7 @@ class CommentScraper(object):
     """
 
     @staticmethod
-    def getComments(since, until=None):
+    def getComments(since, until=None, timeout=None):
         """Scrape comments between 2 timestamps.
 
         Params:
@@ -159,6 +163,7 @@ class CommentScraper(object):
 
         Optional params:
           until: timestamp representing how new the coments should be.
+          timeout: socket timeout; None switches to a default value
 
         Yields:
           One comment. This is a dict.
@@ -183,4 +188,5 @@ class CommentScraper(object):
             "parent_id": "parent_id",
         }
 
-        return Scraper().scrape("comment", since, until, fields)
+        return Scraper().scrape("comment", since, until=until,
+                                fields=fields, timeout=timeout)

@@ -1,6 +1,7 @@
 import factory
 import httpretty
 import json
+from mock import patch
 import unittest
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
@@ -25,6 +26,7 @@ class ResponseFactory(factory.Factory):
 
 
 class TestScraper(unittest.TestCase):
+    SOCK_SET_TIMEOUT_PATH = "httpretty.core.fakesock.socket.settimeout"
 
     @httpretty.activate
     def test_scrape(self):
@@ -36,6 +38,21 @@ class TestScraper(unittest.TestCase):
 
         resp = list(Scraper().scrape(tag="test", since=42))
         self.assertListEqual(hits, resp)
+
+    @httpretty.activate
+    def test_timeout(self):
+        with patch(self.SOCK_SET_TIMEOUT_PATH) as set_timeout_mock:
+            # The contents of the response and arguments of the method call
+            # are irrelevant, the focus is setting the socket timeout
+            httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
+                               responses=self._createPages(hits=[]),
+                               content_type="application/json")
+            timeout = 10
+            # Force results retrieval (method is a generator)
+            list(Scraper.scrape("comments", 0, 1, 0, timeout))
+
+            self.assertEquals(set_timeout_mock.call_args[0][0], timeout,
+                              "Timeout has not been set")
 
     @httpretty.activate
     def test_scrape_generator(self):
