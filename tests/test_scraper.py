@@ -26,7 +26,7 @@ class ResponseFactory(factory.Factory):
 
 
 class TestScraper(unittest.TestCase):
-    SOCK_SET_TIMEOUT_PATH = 'httpretty.core.fakesock.socket.settimeout'
+    SOCK_SET_TIMEOUT_PATH = "httpretty.core.fakesock.socket.settimeout"
 
     @httpretty.activate
     def test_scrape(self):
