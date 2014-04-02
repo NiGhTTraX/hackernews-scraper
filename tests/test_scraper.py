@@ -44,7 +44,6 @@ class TestScraper(unittest.TestCase):
         with patch(self.SOCK_SET_TIMEOUT_PATH) as set_timeout_mock:
             # The contents of the response and arguments of the method call
             # are irrelevant, the focus is setting the socket timeout
-            hits = [ItemFactory()]
             httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=[]),
                                content_type="application/json")
