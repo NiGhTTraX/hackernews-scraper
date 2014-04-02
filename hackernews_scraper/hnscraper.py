@@ -142,7 +142,8 @@ class StoryScraper(object):
             "story_id": "objectID"
         }
 
-        return Scraper().scrape("story", since, until, fields)
+        return Scraper().scrape("story", since, until=until,
+                                fields=fields, timeout=timeout)
 
 
 class CommentScraper(object):
