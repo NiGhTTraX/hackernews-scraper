@@ -188,4 +188,4 @@ class CommentScraper(object):
         }
 
         return Scraper().scrape("comment", since, until=until,
-                                fields=fileds, timeout=timeout)
+                                fields=fields, timeout=timeout)
