@@ -67,6 +67,18 @@ class TestScraper(BaseTest):
             fields=fields)[0]
         self.assertDictEqual(translated_object, expected)
 
+    def test_translate_missing_field(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "expected_field": "missing_field"
+        }
+
+        with self.assertRaises(KeyError):
+            Scraper._translateFields({ "hits": [dummy_object] }, fields=fields)
+
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
         item = ItemFactory()
@@ -93,21 +105,6 @@ class TestScraper(BaseTest):
 
         resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
         self.assertItemsEqual(resp[0].keys(), ["test"])
-
-    @httpretty.activate
-    def test_scrape_translate_invalid_field(self):
-        item = ItemFactory()
-
-        httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
-                               responses=self._createPages(hits=[item]),
-                               content_type="application/json")
-
-        fields = {
-            "test": "missing"
-        }
-
-        resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
-        self.assertItemsEqual(resp[0].keys(), [])
 
     @httpretty.activate
     def test_scrape_multiple_pages(self):

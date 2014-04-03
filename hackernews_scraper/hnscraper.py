@@ -94,10 +94,7 @@ class Scraper(object):
         for hit in response["hits"]:
             item = {}
             for translated_field, original_field in fields.iteritems():
-                try:
-                    item[translated_field] = hit[original_field]
-                except KeyError:
-                    pass
+                item[translated_field] = hit[original_field]
 
             hits.append(item)
 
