@@ -68,6 +68,23 @@ class TestScraper(unittest.TestCase):
         resp = gen.next()
         self.assertEqual(resp, hits[1])
 
+    def test_translate_fields(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "changed1": "first_field",
+            "changed2": "second_field"
+        }
+        expected = {
+            "changed1": 42,
+            "changed2": 21
+        }
+        translated_object = Scraper._translateFields({ "hits": [dummy_object] },
+            fields=fields)[0]
+        self.assertDictEqual(translated_object, expected)
+
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
         item = ItemFactory()
