@@ -15,8 +15,7 @@ class ItemFactory(factory.Factory):
 class ResponseFactory(factory.Factory):
     FACTORY_FOR = dict
 
-    nbPages = 0
-
+    nbPages = 1
     hits = [ItemFactory(), ItemFactory()]
     nbHits = factory.LazyAttribute(lambda x: x.nbPages * len(x.hits))
     hitsPerPage = factory.LazyAttribute(lambda x: len(x.hits))
@@ -24,16 +23,17 @@ class ResponseFactory(factory.Factory):
 
 class BaseTest(unittest.TestCase):
     def _createPages(self, pages=1, hits=None):
-        resp = [
-            httpretty.Response(body=json.dumps(
-                ResponseFactory(pages=pages, hits=hits)
-            ))
-        ] * pages
+        if hits is None:
+          hits = []
 
-        lastPage = ResponseFactory()
-        lastPage["nbHits"] = 0
-        lastPage["hits"] = []
+        page = ResponseFactory(nbPages=pages, hits=hits)
+        resp = [httpretty.Response(body=json.dumps(page))] * pages
 
+        # Last page will have an empty `hits` field, but will have the correct
+        # `nbHits`, which is supposed to be just like the previous pages
+        lastPage = ResponseFactory(
+            hits=[], nbPages=pages,
+            hitsPerPage=page["hitsPerPage"], nbHits=page["nbHits"])
         resp.append(httpretty.Response(body=json.dumps(lastPage)))
 
         return resp
