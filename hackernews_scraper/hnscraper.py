@@ -24,9 +24,9 @@ class Scraper(object):
         Optional params:
           until: timestamp representing how new the items should be.
           fields: Field translations. This is a dict in the form
-          { translated_field: original_field }. Only the fields specified in this
-          dict will be contained in the response. If this is None, the exact
-          API response will be returned.
+          { translated_field: original_field }. Only the fields specified in
+          this dict will be contained in the response. If this is None, the
+          exact API response will be returned.
           timeout: socket timeout
 
         Yields:
@@ -34,8 +34,8 @@ class Scraper(object):
           using the optional fields param.
 
         Raises:
-          TooManyItemsException if there's more items than the endpoint can let us
-          fetch.
+          TooManyItemsException if there's more items than the endpoint can let
+          us fetch.
         """
 
         page = 0
@@ -65,8 +65,8 @@ class Scraper(object):
         hits = Scraper._translateFields(resp, fields)
 
         if not hits:
-            # This might be the last page, or there might be more pages than we can
-            # fetch.
+            # This might be the last page, or there might be more pages than we
+            # can fetch.
             if resp["nbHits"] > resp["nbPages"] * resp["hitsPerPage"]:
                 raise TooManyItemsException("More than 50 pages of items")
 
@@ -82,9 +82,9 @@ class Scraper(object):
           response: Dict containing all the hits.
 
         Optional params:
-          fields: A dictionary representing the field translations. Should be in the
-          form: translated_field: original_field. If not provided, just returned the
-          whole objects.
+          fields: A dictionary representing the field translations. Should be in
+          the form: translated_field: original_field. If not provided, just
+          return the untouched hits.
         """
 
         if fields is None:
