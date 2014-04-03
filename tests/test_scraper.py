@@ -1,31 +1,13 @@
-import factory
 import httpretty
 import json
 from mock import patch
-import unittest
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, TooManyItemsException
+from .utils import BaseTest, ItemFactory, ResponseFactory
 
 
-class ItemFactory(factory.Factory):
-    FACTORY_FOR = dict
-    objectID = 21
-    created_at_i = 42
-    title = "Test item"
-
-
-class ResponseFactory(factory.Factory):
-    FACTORY_FOR = dict
-
-    nbPages = 0
-
-    hits = [ItemFactory(), ItemFactory()]
-    nbHits = factory.LazyAttribute(lambda x: x.nbPages * len(x.hits))
-    hitsPerPage = factory.LazyAttribute(lambda x: len(x.hits))
-
-
-class TestScraper(unittest.TestCase):
+class TestScraper(BaseTest):
     SOCK_SET_TIMEOUT_PATH = "httpretty.core.fakesock.socket.settimeout"
 
     @httpretty.activate
@@ -204,17 +186,3 @@ class TestScraper(unittest.TestCase):
             }
         )
 
-    def _createPages(self, pages=1, hits=None):
-        resp = [
-            httpretty.Response(body=json.dumps(
-                ResponseFactory(pages=pages, hits=hits)
-            ))
-        ] * pages
-
-        lastPage = ResponseFactory()
-        lastPage["nbHits"] = 0
-        lastPage["hits"] = []
-
-        resp.append(httpretty.Response(body=json.dumps(lastPage)))
-
-        return resp
