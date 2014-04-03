@@ -29,6 +29,19 @@ class CommentFactory(factory.Factory):
     parent_id = 42
 
 
+class StoryFactory(factory.Factory):
+    FACTORY_FOR = dict
+
+    created_at = "2014-04-03T10:17:28.000Z"
+    title = "Test story"
+    url = "www.google.com"
+    author = "yourdad"
+    points = 42
+    story_text = "Fuzzy wuzzy had no hair"
+    timestamp = 42
+    story_id = 42
+
+
 class ResponseFactory(factory.Factory):
     FACTORY_FOR = dict
 
