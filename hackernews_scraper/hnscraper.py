@@ -120,7 +120,7 @@ class StoryScraper(object):
         "points": "points",
         "story_text": "points",
         "timestamp": "created_at_i",
-        "story_id": "objectID"
+        "objectID": "story_id"
     }
 
     @staticmethod
