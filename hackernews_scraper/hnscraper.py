@@ -78,6 +78,9 @@ class Scraper(object):
     def _translateFields(response, fields=None):
         """Translate fields of returned objects.
 
+        If any of the required fields are missing from the response it will
+        raise KeyError.
+
         Params:
           response: Dict containing all the hits.
 
