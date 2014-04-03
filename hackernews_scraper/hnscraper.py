@@ -112,6 +112,17 @@ class StoryScraper(object):
         stories since 15 Mar 2014 16:45:58 GMT.
     """
 
+    FIELDS = {
+        "created_at": "created_at",
+        "title": "title",
+        "url": "url",
+        "author": "author",
+        "points": "points",
+        "story_text": "points",
+        "timestamp": "created_at_i",
+        "story_id": "objectID"
+    }
+
     @staticmethod
     def getStories(since, until=None, timeout=None):
         """Scrape stories between 2 timestamps.
@@ -130,20 +141,8 @@ class StoryScraper(object):
           TooManyItemsException.
         """
 
-        # These are the fields that the response will contain.
-        fields = {
-            "created_at": "created_at",
-            "title": "title",
-            "url": "url",
-            "author": "author",
-            "points": "points",
-            "story_text": "points",
-            "timestamp": "created_at_i",
-            "story_id": "objectID"
-        }
-
         return Scraper().scrape("story", since, until=until,
-                                fields=fields, timeout=timeout)
+                                fields=StoryScraper.FIELDS, timeout=timeout)
 
 
 class CommentScraper(object):
@@ -153,6 +152,21 @@ class CommentScraper(object):
         CommentScraper.getComments("comment", 1394901958) will return all
         comments since 15 Mar 2014 16:45:58 GMT.
     """
+
+    FIELDS = {
+        "created_at": "created_at",
+        "title": "title",
+        "url": "url",
+        "comment_text": "comment_text",
+        "story_id": "story_id",
+        "story_title": "story_title",
+        "story_url": "story_url",
+        "author": "author",
+        "points": "points",
+        "timestamp": "created_at_i",
+        "comment_id": "objectID",
+        "parent_id": "parent_id",
+    }
 
     @staticmethod
     def getComments(since, until=None, timeout=None):
@@ -172,21 +186,6 @@ class CommentScraper(object):
           TooManyItemsException.
         """
 
-        # These are the fields that the response will contain.
-        fields = {
-            "created_at": "created_at",
-            "title": "title",
-            "url": "url",
-            "comment_text": "comment_text",
-            "story_id": "story_id",
-            "story_title": "story_title",
-            "story_url": "story_url",
-            "author": "author",
-            "points": "points",
-            "timestamp": "created_at_i",
-            "comment_id": "objectID",
-            "parent_id": "parent_id",
-        }
-
         return Scraper().scrape("comment", since, until=until,
-                                fields=fields, timeout=timeout)
+                                fields=CommentScraper.FIELDS, timeout=timeout)
+
