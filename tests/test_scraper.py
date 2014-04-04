@@ -67,6 +67,25 @@ class TestScraper(BaseTest):
             fields=fields)[0]
         self.assertDictEqual(translated_object, expected)
 
+    def test_translate_fields_multiple_objects(self):
+        NR_OBJECTS = 2
+
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "changed1": "first_field",
+            "changed2": "second_field"
+        }
+        expected = [{
+            "changed1": 42,
+            "changed2": 21
+        }] * NR_OBJECTS
+        translated_objects = Scraper._translateFields(
+                {"hits": [dummy_object] * NR_OBJECTS}, fields=fields)
+        self.assertItemsEqual(translated_objects, expected)
+
     def test_translate_missing_field(self):
         dummy_object = {
             "first_field": 42,
@@ -78,6 +97,32 @@ class TestScraper(BaseTest):
 
         with self.assertRaises(KeyError):
             Scraper._translateFields({"hits": [dummy_object]}, fields=fields)
+
+    def test_translate_missing_field_multiple_objects(self):
+        dummy_object = {
+            "valid_field": 42,
+            "missing_field": 21
+        }
+        dummy_object_with_missing_field = {
+            "valid_field": 42
+        }
+        fields = {
+            "expected_field": "missing_field"
+        }
+
+        with self.assertRaises(KeyError):
+            Scraper._translateFields(
+                    {"hits": [dummy_object, dummy_object_with_missing_field]},
+                    fields=fields)
+
+    def test_translate_fields_no_fields(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        translated_object = Scraper._translateFields({"hits": [dummy_object]},
+            fields=None)[0]
+        self.assertDictEqual(translated_object, dummy_object)
 
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
