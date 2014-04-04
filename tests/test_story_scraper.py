@@ -4,10 +4,10 @@ from mock import patch
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, StoryScraper
 from .factories import StoryFactory
-from .utils import BaseTest
+from .basetestcase import BaseTestCase
 
 
-class TestStoryScraper(BaseTest):
+class TestStoryScraper(BaseTestCase):
     SCRAPER_SCRAPE_PATH = "hackernews_scraper.hnscraper.Scraper.scrape"
 
     @httpretty.activate

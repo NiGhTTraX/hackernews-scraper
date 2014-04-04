@@ -5,7 +5,7 @@ import json
 from .factories import ResponseFactory
 
 
-class BaseTest(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
     def _createPages(self, pages=1, hits=None):
         if hits is None:
           hits = []

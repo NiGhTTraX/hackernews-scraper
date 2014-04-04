@@ -5,10 +5,10 @@ from mock import patch
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, TooManyItemsException
 from .factories import ItemFactory, ResponseFactory
-from .utils import BaseTest
+from .basetestcase import BaseTestCase
 
 
-class TestScraper(BaseTest):
+class TestScraper(BaseTestCase):
     SOCK_SET_TIMEOUT_PATH = "httpretty.core.fakesock.socket.settimeout"
 
     @httpretty.activate
