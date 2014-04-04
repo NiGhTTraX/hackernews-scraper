@@ -24,9 +24,9 @@ class Scraper(object):
         Optional params:
           until: timestamp representing how new the items should be.
           fields: Field translations. This is a dict in the form
-          { translated_field: original_field }. Only the fields specified in this
-          dict will be contained in the response. If this is None, the exact
-          API response will be returned.
+          { translated_field: original_field }. Only the fields specified in
+          this dict will be contained in the response. If this is None, the
+          exact API response will be returned.
           timeout: socket timeout
 
         Yields:
@@ -34,8 +34,8 @@ class Scraper(object):
           using the optional fields param.
 
         Raises:
-          TooManyItemsException if there's more items than the endpoint can let us
-          fetch.
+          TooManyItemsException if there's more items than the endpoint can let
+          us fetch.
         """
 
         page = 0
@@ -65,8 +65,8 @@ class Scraper(object):
         hits = Scraper._translateFields(resp, fields)
 
         if not hits:
-            # This might be the last page, or there might be more pages than we can
-            # fetch.
+            # This might be the last page, or there might be more pages than we
+            # can fetch.
             if resp["nbHits"] > resp["nbPages"] * resp["hitsPerPage"]:
                 raise TooManyItemsException("More than 50 pages of items")
 
@@ -78,13 +78,16 @@ class Scraper(object):
     def _translateFields(response, fields=None):
         """Translate fields of returned objects.
 
+        If any of the required fields are missing from the response it will
+        raise KeyError.
+
         Params:
           response: Dict containing all the hits.
 
         Optional params:
-          fields: A dictionary representing the field translations. Should be in the
-          form: translated_field: original_field. If not provided, just returned the
-          whole objects.
+          fields: A dictionary representing the field translations. Should be in
+          the form: translated_field: original_field. If not provided, just
+          return the untouched hits.
         """
 
         if fields is None:
@@ -94,10 +97,7 @@ class Scraper(object):
         for hit in response["hits"]:
             item = {}
             for translated_field, original_field in fields.iteritems():
-                try:
-                    item[translated_field] = hit[original_field]
-                except KeyError:
-                    pass
+                item[translated_field] = hit[original_field]
 
             hits.append(item)
 
@@ -111,6 +111,17 @@ class StoryScraper(object):
         StoryScraper.getStories("story", 1394901958) will return all
         stories since 15 Mar 2014 16:45:58 GMT.
     """
+
+    FIELDS = {
+        "created_at": "created_at",
+        "title": "title",
+        "url": "url",
+        "author": "author",
+        "points": "points",
+        "story_text": "points",
+        "timestamp": "created_at_i",
+        "objectID": "story_id"
+    }
 
     @staticmethod
     def getStories(since, until=None, timeout=None):
@@ -130,20 +141,8 @@ class StoryScraper(object):
           TooManyItemsException.
         """
 
-        # These are the fields that the response will contain.
-        fields = {
-            "created_at": "created_at",
-            "title": "title",
-            "url": "url",
-            "author": "author",
-            "points": "points",
-            "story_text": "points",
-            "timestamp": "created_at_i",
-            "story_id": "objectID"
-        }
-
         return Scraper().scrape("story", since, until=until,
-                                fields=fields, timeout=timeout)
+                                fields=StoryScraper.FIELDS, timeout=timeout)
 
 
 class CommentScraper(object):
@@ -153,6 +152,21 @@ class CommentScraper(object):
         CommentScraper.getComments("comment", 1394901958) will return all
         comments since 15 Mar 2014 16:45:58 GMT.
     """
+
+    FIELDS = {
+        "created_at": "created_at",
+        "title": "title",
+        "url": "url",
+        "comment_text": "comment_text",
+        "story_id": "story_id",
+        "story_title": "story_title",
+        "story_url": "story_url",
+        "author": "author",
+        "points": "points",
+        "timestamp": "created_at_i",
+        "comment_id": "objectID",
+        "parent_id": "parent_id",
+    }
 
     @staticmethod
     def getComments(since, until=None, timeout=None):
@@ -172,21 +186,6 @@ class CommentScraper(object):
           TooManyItemsException.
         """
 
-        # These are the fields that the response will contain.
-        fields = {
-            "created_at": "created_at",
-            "title": "title",
-            "url": "url",
-            "comment_text": "comment_text",
-            "story_id": "story_id",
-            "story_title": "story_title",
-            "story_url": "story_url",
-            "author": "author",
-            "points": "points",
-            "timestamp": "created_at_i",
-            "comment_id": "objectID",
-            "parent_id": "parent_id",
-        }
-
         return Scraper().scrape("comment", since, until=until,
-                                fields=fields, timeout=timeout)
+                                fields=CommentScraper.FIELDS, timeout=timeout)
+

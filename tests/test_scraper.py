@@ -1,31 +1,14 @@
-import factory
 import httpretty
 import json
 from mock import patch
-import unittest
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, TooManyItemsException
+from .factories import ItemFactory, ResponseFactory
+from .basetestcase import BaseTestCase
 
 
-class ItemFactory(factory.Factory):
-    FACTORY_FOR = dict
-    objectID = 21
-    created_at_i = 42
-    title = "Test item"
-
-
-class ResponseFactory(factory.Factory):
-    FACTORY_FOR = dict
-
-    nbPages = 0
-
-    hits = [ItemFactory(), ItemFactory()]
-    nbHits = factory.LazyAttribute(lambda x: x.nbPages * len(x.hits))
-    hitsPerPage = factory.LazyAttribute(lambda x: len(x.hits))
-
-
-class TestScraper(unittest.TestCase):
+class TestScraper(BaseTestCase):
     SOCK_SET_TIMEOUT_PATH = "httpretty.core.fakesock.socket.settimeout"
 
     @httpretty.activate
@@ -68,6 +51,80 @@ class TestScraper(unittest.TestCase):
         resp = gen.next()
         self.assertEqual(resp, hits[1])
 
+    def test_translate_fields(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "changed1": "first_field",
+            "changed2": "second_field"
+        }
+        expected = {
+            "changed1": 42,
+            "changed2": 21
+        }
+        translated_object = Scraper._translateFields({"hits": [dummy_object]},
+            fields=fields)[0]
+        self.assertDictEqual(translated_object, expected)
+
+    def test_translate_fields_multiple_objects(self):
+        NR_OBJECTS = 2
+
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "changed1": "first_field",
+            "changed2": "second_field"
+        }
+        expected = [{
+            "changed1": 42,
+            "changed2": 21
+        }] * NR_OBJECTS
+        translated_objects = Scraper._translateFields(
+                {"hits": [dummy_object] * NR_OBJECTS}, fields=fields)
+        self.assertItemsEqual(translated_objects, expected)
+
+    def test_translate_missing_field(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        fields = {
+            "expected_field": "missing_field"
+        }
+
+        with self.assertRaises(KeyError):
+            Scraper._translateFields({"hits": [dummy_object]}, fields=fields)
+
+    def test_translate_missing_field_multiple_objects(self):
+        dummy_object = {
+            "valid_field": 42,
+            "missing_field": 21
+        }
+        dummy_object_with_missing_field = {
+            "valid_field": 42
+        }
+        fields = {
+            "expected_field": "missing_field"
+        }
+
+        with self.assertRaises(KeyError):
+            Scraper._translateFields(
+                    {"hits": [dummy_object, dummy_object_with_missing_field]},
+                    fields=fields)
+
+    def test_translate_fields_no_fields(self):
+        dummy_object = {
+            "first_field": 42,
+            "second_field": 21
+        }
+        translated_object = Scraper._translateFields({"hits": [dummy_object]},
+            fields=None)[0]
+        self.assertDictEqual(translated_object, dummy_object)
+
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
         item = ItemFactory()
@@ -94,21 +151,6 @@ class TestScraper(unittest.TestCase):
 
         resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
         self.assertItemsEqual(resp[0].keys(), ["test"])
-
-    @httpretty.activate
-    def test_scrape_translate_invalid_field(self):
-        item = ItemFactory()
-
-        httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
-                               responses=self._createPages(hits=[item]),
-                               content_type="application/json")
-
-        fields = {
-            "test": "missing"
-        }
-
-        resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
-        self.assertItemsEqual(resp[0].keys(), [])
 
     @httpretty.activate
     def test_scrape_multiple_pages(self):
@@ -187,17 +229,3 @@ class TestScraper(unittest.TestCase):
             }
         )
 
-    def _createPages(self, pages=1, hits=None):
-        resp = [
-            httpretty.Response(body=json.dumps(
-                ResponseFactory(pages=pages, hits=hits)
-            ))
-        ] * pages
-
-        lastPage = ResponseFactory()
-        lastPage["nbHits"] = 0
-        lastPage["hits"] = []
-
-        resp.append(httpretty.Response(body=json.dumps(lastPage)))
-
-        return resp
