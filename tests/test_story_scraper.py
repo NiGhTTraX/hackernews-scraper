@@ -3,7 +3,8 @@ from mock import patch
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, StoryScraper
-from .utils import BaseTest, StoryFactory
+from .factories import StoryFactory
+from .utils import BaseTest
 
 
 class TestStoryScraper(BaseTest):

@@ -4,7 +4,8 @@ from mock import patch
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, TooManyItemsException
-from .utils import BaseTest, ItemFactory, ResponseFactory
+from .factories import ItemFactory, ResponseFactory
+from .utils import BaseTest
 
 
 class TestScraper(BaseTest):

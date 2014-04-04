@@ -3,7 +3,8 @@ from mock import patch
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, CommentScraper
-from .utils import BaseTest, CommentFactory
+from .factories import CommentFactory
+from .utils import BaseTest
 
 
 class TestCommentScraper(BaseTest):
