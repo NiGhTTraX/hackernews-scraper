@@ -1,7 +1,5 @@
 import httpretty
-import json
 from mock import patch
-import unittest
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, CommentScraper
@@ -18,7 +16,7 @@ class TestCommentScraper(BaseTest):
                                    responses=self._createPages(hits=[]),
                                    content_type="application/json")
 
-            resp = list(CommentScraper().getComments(since=42))
+            list(CommentScraper().getComments(since=42))
             self.assertEquals(endpoint_get_mock.call_args[0][0], "comment",
                               "Correct tag was used")
 
@@ -31,7 +29,7 @@ class TestCommentScraper(BaseTest):
                                content_type="application/json")
 
         resp = list(CommentScraper().getComments(since=42))
-        expected = Scraper._translateFields({ "hits": hits },
+        expected = Scraper._translateFields({"hits": hits},
                 CommentScraper.FIELDS)
         self.assertListEqual(resp, expected)
 

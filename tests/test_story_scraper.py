@@ -1,7 +1,5 @@
 import httpretty
-import json
 from mock import patch
-import unittest
 
 from hackernews_scraper.endpoints import AlgoliaEndpoint
 from hackernews_scraper.hnscraper import Scraper, StoryScraper
@@ -18,7 +16,7 @@ class TestStoryScraper(BaseTest):
                                responses=self._createPages(hits=[]),
                                content_type="application/json")
 
-            resp = list(StoryScraper().getStories(since=42))
+            list(StoryScraper().getStories(since=42))
             self.assertEquals(endpoint_get_mock.call_args[0][0], "story",
                               "Correct tag was used")
 
@@ -31,7 +29,7 @@ class TestStoryScraper(BaseTest):
                                content_type="application/json")
 
         resp = list(StoryScraper().getStories(since=42))
-        expected = Scraper._translateFields({ "hits": hits },
+        expected = Scraper._translateFields({"hits": hits},
                 StoryScraper.FIELDS)
         self.assertListEqual(resp, expected)
 

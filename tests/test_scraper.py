@@ -63,7 +63,7 @@ class TestScraper(BaseTest):
             "changed1": 42,
             "changed2": 21
         }
-        translated_object = Scraper._translateFields({ "hits": [dummy_object] },
+        translated_object = Scraper._translateFields({"hits": [dummy_object]},
             fields=fields)[0]
         self.assertDictEqual(translated_object, expected)
 
@@ -77,7 +77,7 @@ class TestScraper(BaseTest):
         }
 
         with self.assertRaises(KeyError):
-            Scraper._translateFields({ "hits": [dummy_object] }, fields=fields)
+            Scraper._translateFields({"hits": [dummy_object]}, fields=fields)
 
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
