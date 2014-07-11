@@ -18,7 +18,7 @@ def get_version(package_name):
                 return match.groups()[0]
     raise Exception("No package version found!")
 
-setup(name=PACKAGE
+setup(name=PACKAGE,
       description='Python library for retrieving comments and stories from HackerNews',
       packages=find_packages(),
       version=get_version(PACKAGE),
