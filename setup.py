@@ -7,4 +7,8 @@ setup(name='hackernews_scraper',
       packages=find_packages(),
       version=__version__,
       install_requires=['requests'],
+      url='https://github.com/NiGhTTraX/hackernews-scraper',
+      license='MIT',
+      platforms='any',
+      tests_require=['nose', 'factoryboy'],
       )
