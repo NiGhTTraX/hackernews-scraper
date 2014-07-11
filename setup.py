@@ -10,5 +10,5 @@ setup(name='hackernews_scraper',
       url='https://github.com/NiGhTTraX/hackernews-scraper',
       license='MIT',
       platforms='any',
-      tests_require=['nose', 'factoryboy'],
+      tests_require=['nose', 'factory_boy', 'httpretty'],
       )
