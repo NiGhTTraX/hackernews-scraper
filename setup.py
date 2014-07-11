@@ -4,6 +4,9 @@ import codecs
 import os
 import re
 
+root_dir = os.path.abspath(os.path.dirname(__file__))
+PACKAGE = 'hackernews_scraper'
+
 def get_version(package_name):
     version_re = re.compile(r"^__version__ = [\"']([\w_.-]+)[\"']$")
     package_components = package_name.split('.')
@@ -14,8 +17,6 @@ def get_version(package_name):
             if match:
                 return match.groups()[0]
     return '0.1.0'
-
-PACKAGE = 'hackernews_scraper'
 
 setup(name='hackernews_scraper',
       description='Python library for retrieving comments and stories from HackerNews',
