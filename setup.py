@@ -15,6 +15,8 @@ def get_version(package_name):
                 return match.groups()[0]
     return '0.1.0'
 
+PACKAGE = 'hackernews_scraper'
+
 setup(name='hackernews_scraper',
       description='Python library for retrieving comments and stories from HackerNews',
       packages=find_packages(),
