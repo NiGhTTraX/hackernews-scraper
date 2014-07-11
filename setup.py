@@ -5,4 +5,6 @@ from hackernews_scraper import __version__
 setup(name='hackernews_scraper',
       description='Python library for retrieving comments and stories from HackerNews',
       packages=find_packages(),
-      version=__version__)
+      version=__version__,
+      install_requires=['requests'],
+      )
