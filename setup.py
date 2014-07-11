@@ -18,7 +18,7 @@ def get_version(package_name):
 setup(name='hackernews_scraper',
       description='Python library for retrieving comments and stories from HackerNews',
       packages=find_packages(),
-      version=get_version(),
+      version=get_version(PACKAGE),
       install_requires=['requests'],
       url='https://github.com/NiGhTTraX/hackernews-scraper',
       license='MIT',
