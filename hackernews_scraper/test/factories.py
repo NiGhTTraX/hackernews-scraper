@@ -1,4 +1,7 @@
+from datetime import datetime, timedelta
 import factory
+from factory.fuzzy import FuzzyText, FuzzyInteger
+import time
 
 
 class ItemFactory(factory.Factory):
@@ -12,24 +15,29 @@ class ItemFactory(factory.Factory):
 class CommentFactory(factory.Factory):
     FACTORY_FOR = dict
 
-    created_at = "2014-04-03T10:17:28.000Z"
-    title = "Test comment"
+    @factory.sequence
+    def created_at(n):
+        return (datetime.now() - timedelta(minutes=n)).isoformat()
+
+    @factory.sequence
+    def created_at_i(n):
+        return time.time() - n
+
+    title = FuzzyText(length=20)
     url = "www.google.com"
-    comment_text = "Fuzzy wuzzy was a bear"
+    comment_text = FuzzyText(length=300)
     story_id = 42
     story_title = "Bear kills man"
     story_url = "www.bing.com"
-    author = "yourmom"
-    points = 42
-    created_at_i = 42
-    objectID = 42
-    parent_id = 42
+    author = FuzzyText(length=10)
+    points = FuzzyInteger(100)
+    objectID = FuzzyInteger(100)
+    parent_id = FuzzyInteger(100)
 
 
 class StoryFactory(factory.Factory):
     FACTORY_FOR = dict
 
-    created_at = "2014-04-03T10:17:28.000Z"
     created_at_i = 42
     title = "Test story"
     url = "www.google.com"
@@ -46,4 +54,3 @@ class ResponseFactory(factory.Factory):
     hits = [ItemFactory(), ItemFactory()]
     nbHits = factory.LazyAttribute(lambda x: x.nbPages * len(x.hits))
     hitsPerPage = factory.LazyAttribute(lambda x: len(x.hits))
-
