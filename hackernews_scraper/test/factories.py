@@ -39,6 +39,7 @@ class StoryFactory(factory.Factory):
     FACTORY_FOR = dict
 
     created_at_i = 42
+    created_at = "2014-04-03T10:17:28.000Z"
     title = "Test story"
     url = "www.google.com"
     author = "yourdad"
