@@ -21,7 +21,7 @@ class CommentFactory(factory.Factory):
 
     @factory.sequence
     def created_at_i(n):
-        return time.time() - n
+        return int(time.time()) - n
 
     title = FuzzyText(length=20)
     url = "www.google.com"
