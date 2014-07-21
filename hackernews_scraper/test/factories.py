@@ -61,6 +61,6 @@ class ResponseFactory(factory.Factory):
     FACTORY_FOR = dict
 
     nbPages = 1
-    hits = [ItemFactory() for _ in range(2)]
+    hits = [ItemFactory(created_at_i=42) for _ in range(2)]
     nbHits = factory.LazyAttribute(lambda x: x.nbPages * len(x.hits))
     hitsPerPage = factory.LazyAttribute(lambda x: len(x.hits))

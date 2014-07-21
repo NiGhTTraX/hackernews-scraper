@@ -13,7 +13,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape(self):
-        hits = [ItemFactory(), ItemFactory()]
+        hits = [ItemFactory(created_at_i=42) for _ in range(2)]
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=hits),
@@ -39,7 +39,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape_generator(self):
-        hits = [ItemFactory(), ItemFactory()]
+        hits = [ItemFactory(created_at_i=42) for _ in range(2)]
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(pages=2, hits=hits),
@@ -127,7 +127,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape_all_fields_are_returned(self):
-        item = ItemFactory()
+        item = ItemFactory(created_at_i=42)
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=[item]),
@@ -139,7 +139,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape_translate_fields(self):
-        item = ItemFactory()
+        item = ItemFactory(created_at_i=42)
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=[item]),
@@ -156,7 +156,7 @@ class TestScraper(BaseTestCase):
     def test_scrape_multiple_pages(self):
         PAGES = 2
 
-        hits = [ItemFactory(), ItemFactory()]
+        hits = [ItemFactory(created_at_i=42) for _ in range(2)]
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(PAGES, hits),
@@ -167,7 +167,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape_page_limit(self):
-        hits = [ItemFactory(), ItemFactory()]
+        hits = [ItemFactory(created_at_i=42) for _ in range(2)]
         pages = [httpretty.Response(body=json.dumps(
                 ResponseFactory(hits=hits)
             ))
@@ -203,7 +203,7 @@ class TestScraper(BaseTestCase):
 
     @httpretty.activate
     def test_scrape_correct_request(self):
-        item = ItemFactory()
+        item = ItemFactory(created_at_i=42)
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(pages=2, hits=[item]),
