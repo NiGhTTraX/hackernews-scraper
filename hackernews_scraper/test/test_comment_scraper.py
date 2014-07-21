@@ -23,7 +23,7 @@ class TestCommentScraper(BaseTestCase):
 
     @httpretty.activate
     def test_get_comments(self):
-        hits = [CommentFactory(), CommentFactory()]
+        hits = [CommentFactory(created_at_i=42) for _ in range(2)]
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=hits),
