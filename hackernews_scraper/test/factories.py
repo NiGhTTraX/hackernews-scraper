@@ -27,7 +27,7 @@ class CommentFactory(factory.Factory):
     url = "www.google.com"
     comment_text = FuzzyText(length=300)
     story_id = 42
-    story_title = "Bear kills man"
+    story_title = FuzzyText(length=20)
     story_url = "www.bing.com"
     author = FuzzyText(length=10)
     points = FuzzyInteger(100)
