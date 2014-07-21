@@ -7,9 +7,12 @@ import time
 class ItemFactory(factory.Factory):
     FACTORY_FOR = dict
 
-    objectID = 21
-    created_at_i = 42
-    title = "Test item"
+    @factory.sequence
+    def created_at_i(n):
+        return int(time.time()) - n
+
+    objectID = FuzzyInteger(100)
+    title = FuzzyText(length=10)
 
 
 class CommentFactory(factory.Factory):
