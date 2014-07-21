@@ -38,14 +38,20 @@ class CommentFactory(factory.Factory):
 class StoryFactory(factory.Factory):
     FACTORY_FOR = dict
 
-    created_at = "2014-04-03T10:17:28.000Z"
-    created_at_i = 42
-    title = "Test story"
+    @factory.sequence
+    def created_at(n):
+        return (datetime.now() - timedelta(minutes=n)).isoformat()
+
+    @factory.sequence
+    def created_at_i(n):
+        return int(time.time()) - n
+
+    title = FuzzyText(length=20)
     url = "www.google.com"
-    author = "yourdad"
-    points = 42
-    story_text = "Fuzzy wuzzy had no hair"
-    story_id = 42
+    author = FuzzyText(length=10)
+    points = FuzzyInteger(100)
+    story_text = FuzzyText(length=300)
+    story_id = FuzzyInteger(100)
 
 
 class ResponseFactory(factory.Factory):

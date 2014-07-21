@@ -23,7 +23,7 @@ class TestStoryScraper(BaseTestCase):
 
     @httpretty.activate
     def test_get_stories(self):
-        hits = [StoryFactory(), StoryFactory()]
+        hits = [StoryFactory(created_at_i=42) for _ in range(2)]
 
         httpretty.register_uri(httpretty.GET, AlgoliaEndpoint.URL,
                                responses=self._createPages(hits=hits),
