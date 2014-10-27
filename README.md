@@ -9,7 +9,7 @@ Usage
 =====
 
 ```python
-from hackernews-scraper import CommentScraper
+from hackernews_scraper import CommentScraper
 
 CommentScraper.getComments(since=1394039447)
 ```
