@@ -43,7 +43,7 @@ class AlgoliaEndpoint(object):
         }
 
         url = AlgoliaEndpoint.URL
-        url += "?" + "&".join(["%s=%s" % (k, v) for k, v in params.iteritems()])
+        url += "?" + "&".join(["%s=%s" % (k, v) for k, v in params.items()])
         response = requests.get(url, timeout=timeout)
 
         return response.json()
