@@ -46,9 +46,9 @@ class TestScraper(BaseTestCase):
                                content_type="application/json")
 
         gen = Scraper().scrape(tag="test", since=42)
-        resp = gen.next()
+        resp = next(gen)
         self.assertEqual(resp, hits[0])
-        resp = gen.next()
+        resp = next(gen)
         self.assertEqual(resp, hits[1])
 
     def test_translate_fields(self):
@@ -211,7 +211,7 @@ class TestScraper(BaseTestCase):
 
         gen = Scraper().scrape(tag="test", since=42, until=43)
 
-        gen.next()
+        next(gen)
         self.assertDictEqual(httpretty.last_request().querystring,
             {
               "numericFilters": ["created_at_i>42,created_at_i<43"],
@@ -220,7 +220,7 @@ class TestScraper(BaseTestCase):
             }
         )
 
-        gen.next()
+        next(gen)
         self.assertDictEqual(httpretty.last_request().querystring,
             {
               "numericFilters": ["created_at_i>42,created_at_i<43"],
