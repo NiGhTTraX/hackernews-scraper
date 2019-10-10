@@ -85,7 +85,7 @@ class TestScraper(BaseTestCase):
         }] * NR_OBJECTS
         translated_objects = Scraper._translateFields(
                 {"hits": [dummy_object] * NR_OBJECTS}, fields=fields)
-        self.assertItemsEqual(translated_objects, expected)
+        self.assertCountEqual(translated_objects, expected)
 
     def test_translate_missing_field(self):
         dummy_object = {
@@ -134,7 +134,7 @@ class TestScraper(BaseTestCase):
                                content_type="application/json")
 
         resp = list(Scraper().scrape(tag="test", since=42))
-        self.assertItemsEqual(resp[0].keys(),
+        self.assertCountEqual(resp[0].keys(),
             ["objectID", "created_at_i", "title"])
 
     @httpretty.activate
@@ -150,7 +150,7 @@ class TestScraper(BaseTestCase):
         }
 
         resp = list(Scraper().scrape(tag="test", since=42, fields=fields))
-        self.assertItemsEqual(resp[0].keys(), ["test"])
+        self.assertCountEqual(resp[0].keys(), ["test"])
 
     @httpretty.activate
     def test_scrape_multiple_pages(self):
