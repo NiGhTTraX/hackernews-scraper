@@ -96,7 +96,7 @@ class Scraper(object):
         hits = []
         for hit in response["hits"]:
             item = {}
-            for translated_field, original_field in fields.iteritems():
+            for translated_field, original_field in fields.items():
                 item[translated_field] = hit[original_field]
 
             hits.append(item)
