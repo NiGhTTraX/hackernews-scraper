@@ -1,4 +1,4 @@
-from endpoints import AlgoliaEndpoint
+from hackernews_scraper.endpoints import AlgoliaEndpoint
 
 
 class TooManyItemsException(Exception):
